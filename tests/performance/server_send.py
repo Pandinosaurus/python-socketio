@@ -6,6 +6,9 @@ class Server(socketio.Server):
     def _send_packet(self, eio_sid, pkt):
         pass
 
+    def _send_eio_packet(self, eio_sid, eio_pkt):
+        pass
+
 
 def test():
     s = Server()

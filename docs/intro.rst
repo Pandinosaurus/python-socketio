@@ -101,9 +101,8 @@ Client Features
 ---------------
 
 - Can connect to other Socket.IO servers that are compatible with the
-  JavaScript Socket.IO 1.x and 2.x releases. Work to support release 3.x is in
-  progress.
-- Compatible with Python 3.6+.
+  JavaScript Socket.IO reference server.
+- Compatible with Python 3.8+.
 - Two versions of the client, one for standard Python and another for
   asyncio.
 - Uses an event-based architecture implemented with decorators that
@@ -181,22 +180,21 @@ Server Features
 ---------------
 
 - Can connect to servers running other Socket.IO clients that are compatible
-  with the JavaScript client versions 1.x and 2.x. Work to support the 3.x
-  release is in progress.
-- Compatible with Python 3.6+.
+  with the JavaScript reference client.
+- Compatible with Python 3.8+.
 - Two versions of the server, one for standard Python and another for
   asyncio.
 - Supports large number of clients even on modest hardware due to being
   asynchronous.
-- Can be hosted on any `WSGI <https://wsgi.readthedocs.io/en/latest/index.html>`_ and
-  `ASGI <https://asgi.readthedocs.io/en/latest/>`_ web servers including
+- Can be hosted on any `WSGI <https://wsgi.readthedocs.io/en/latest/index.html>`_ or
+  `ASGI <https://asgi.readthedocs.io/en/latest/>`_ web server including
   `Gunicorn <https://gunicorn.org/>`_, `Uvicorn <https://github.com/encode/uvicorn>`_,
-  `eventlet <http://eventlet.net/>`_ and `gevent <http://gevent.org>`_.
+  `eventlet <http://eventlet.net/>`_ and `gevent <http://www.gevent.org>`_.
 - Can be integrated with WSGI applications written in frameworks such as Flask, Django,
   etc.
 - Can be integrated with `aiohttp <http://aiohttp.readthedocs.io/>`_,
-  `sanic <http://sanic.readthedocs.io/>`_ and `tornado <http://www.tornadoweb.org/>`_
-  ``asyncio`` applications.
+  `FastAPI <https://fastapi.tiangolo.com/>`_, `sanic <http://sanic.readthedocs.io/>`_
+  and `tornado <http://www.tornadoweb.org/>`_ ``asyncio`` applications.
 - Broadcasting of messages to all connected clients, or to subsets of them
   assigned to "rooms".
 - Optional support for multiple servers, connected through a messaging queue
