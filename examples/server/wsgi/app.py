@@ -3,10 +3,26 @@
 # installed
 async_mode = None
 
+# set instrument to `True` to accept connections from the official Socket.IO
+# Admin UI hosted at https://admin.socket.io
+instrument = True
+admin_login = {
+    'username': 'admin',
+    'password': 'python',  # change this to a strong secret for production use!
+}
+
 from flask import Flask, render_template
 import socketio
 
-sio = socketio.Server(logger=True, async_mode=async_mode)
+sio = socketio.Server(
+    async_mode=async_mode,
+    cors_allowed_origins=None if not instrument else [
+        'http://localhost:5000',
+        'https://admin.socket.io',  # edit the allowed origins if necessary
+    ])
+if instrument:
+    sio.instrument(auth=admin_login)
+
 app = Flask(__name__)
 app.wsgi_app = socketio.WSGIApp(sio, app.wsgi_app)
 app.config['SECRET_KEY'] = 'secret!'
@@ -78,11 +94,21 @@ def connect(sid, environ):
 
 
 @sio.event
-def disconnect(sid):
-    print('Client disconnected')
+def disconnect(sid, reason):
+    print('Client disconnected, reason:', reason)
 
 
 if __name__ == '__main__':
+    if instrument:
+        print('The server is instrumented for remote administration.')
+        print(
+            'Use the official Socket.IO Admin UI at https://admin.socket.io '
+            'with the following connection details:'
+        )
+        print(' - Server URL: http://localhost:5000')
+        print(' - Username:', admin_login['username'])
+        print(' - Password:', admin_login['password'])
+        print('')
     if sio.async_mode == 'threading':
         # deploy with Werkzeug
         app.run(threaded=True)

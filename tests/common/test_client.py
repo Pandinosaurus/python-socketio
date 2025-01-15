@@ -1,6 +1,5 @@
 import logging
-import sys
-import unittest
+import time
 from unittest import mock
 
 from engineio import exceptions as engineio_exceptions
@@ -8,7 +7,7 @@ from engineio import json
 from engineio import packet as engineio_packet
 import pytest
 
-from socketio import asyncio_namespace
+from socketio import async_namespace
 from socketio import client
 from socketio import exceptions
 from socketio import msgpack_packet
@@ -16,7 +15,7 @@ from socketio import namespace
 from socketio import packet
 
 
-class TestClient(unittest.TestCase):
+class TestClient:
     def test_is_asyncio_based(self):
         c = client.Client()
         assert not c.is_asyncio_based()
@@ -146,7 +145,7 @@ class TestClient(unittest.TestCase):
         assert c.namespace_handlers['/foo'] == n
 
     def test_namespace_handler_wrong_class(self):
-        class MyNamespace(object):
+        class MyNamespace:
             def __init__(self, n):
                 pass
 
@@ -155,9 +154,8 @@ class TestClient(unittest.TestCase):
         with pytest.raises(ValueError):
             c.register_namespace(n)
 
-    @unittest.skipIf(sys.version_info < (3, 0), 'only for Python 3')
     def test_namespace_handler_wrong_async(self):
-        class MyNamespace(asyncio_namespace.AsyncClientNamespace):
+        class MyNamespace(async_namespace.AsyncClientNamespace):
             pass
 
         c = client.Client()
@@ -237,6 +235,7 @@ class TestClient(unittest.TestCase):
         c.eio.connect = mock.MagicMock()
         c.on('foo', mock.MagicMock(), namespace='/foo')
         c.on('bar', mock.MagicMock(), namespace='/')
+        c.on('baz', mock.MagicMock(), namespace='*')
         c.connect(
             'url',
             headers='headers',
@@ -638,6 +637,7 @@ class TestClient(unittest.TestCase):
 
     def test_disconnect_namespaces(self):
         c = client.Client()
+        c.connected = True
         c.namespaces = {'/foo': '1', '/bar': '2'}
         c._trigger_event = mock.MagicMock()
         c._send_packet = mock.MagicMock()
@@ -752,10 +752,12 @@ class TestClient(unittest.TestCase):
         c.connected = True
         c._trigger_event = mock.MagicMock()
         c._handle_disconnect('/')
-        c._trigger_event.assert_called_once_with('disconnect', namespace='/')
+        c._trigger_event.assert_any_call('disconnect', '/',
+                                         c.reason.SERVER_DISCONNECT)
+        c._trigger_event.assert_any_call('__disconnect_final', '/')
         assert not c.connected
         c._handle_disconnect('/')
-        assert c._trigger_event.call_count == 1
+        assert c._trigger_event.call_count == 2
 
     def test_handle_disconnect_namespace(self):
         c = client.Client()
@@ -763,15 +765,15 @@ class TestClient(unittest.TestCase):
         c.namespaces = {'/foo': '1', '/bar': '2'}
         c._trigger_event = mock.MagicMock()
         c._handle_disconnect('/foo')
-        c._trigger_event.assert_called_once_with(
-            'disconnect', namespace='/foo'
-        )
+        c._trigger_event.assert_any_call('disconnect', '/foo',
+                                         c.reason.SERVER_DISCONNECT)
+        c._trigger_event.assert_any_call('__disconnect_final', '/foo')
         assert c.namespaces == {'/bar': '2'}
         assert c.connected
         c._handle_disconnect('/bar')
-        c._trigger_event.assert_called_with(
-            'disconnect', namespace='/bar'
-        )
+        c._trigger_event.assert_any_call('disconnect', '/bar',
+                                         c.reason.SERVER_DISCONNECT)
+        c._trigger_event.assert_any_call('__disconnect_final', '/bar')
         assert c.namespaces == {}
         assert not c.connected
 
@@ -781,9 +783,9 @@ class TestClient(unittest.TestCase):
         c.namespaces = {'/foo': '1', '/bar': '2'}
         c._trigger_event = mock.MagicMock()
         c._handle_disconnect('/baz')
-        c._trigger_event.assert_called_once_with(
-            'disconnect', namespace='/baz'
-        )
+        c._trigger_event.assert_any_call('disconnect', '/baz',
+                                         c.reason.SERVER_DISCONNECT)
+        c._trigger_event.assert_any_call('__disconnect_final', '/baz')
         assert c.namespaces == {'/foo': '1', '/bar': '2'}
         assert c.connected
 
@@ -793,7 +795,9 @@ class TestClient(unittest.TestCase):
         c.namespaces = {'/foo': '1', '/bar': '2'}
         c._trigger_event = mock.MagicMock()
         c._handle_disconnect('/')
-        c._trigger_event.assert_called_with('disconnect', namespace='/')
+        c._trigger_event.assert_any_call('disconnect', '/',
+                                         c.reason.SERVER_DISCONNECT)
+        c._trigger_event.assert_any_call('__disconnect_final', '/')
         assert c.namespaces == {'/foo': '1', '/bar': '2'}
         assert c.connected
 
@@ -958,6 +962,64 @@ class TestClient(unittest.TestCase):
         handler.assert_called_once_with(1, '2')
         catchall_handler.assert_called_once_with('bar', 1, '2', 3)
 
+    def test_trigger_event_with_catchall_namespace(self):
+        c = client.Client()
+        connect_star_handler = mock.MagicMock()
+        msg_foo_handler = mock.MagicMock()
+        msg_star_handler = mock.MagicMock()
+        star_foo_handler = mock.MagicMock()
+        star_star_handler = mock.MagicMock()
+        c.on('connect', connect_star_handler, namespace='*')
+        c.on('msg', msg_foo_handler, namespace='/foo')
+        c.on('msg', msg_star_handler, namespace='*')
+        c.on('*', star_foo_handler, namespace='/foo')
+        c.on('*', star_star_handler, namespace='*')
+        c._trigger_event('connect', '/bar')
+        c._trigger_event('msg', '/foo', 'a', 'b')
+        c._trigger_event('msg', '/bar', 'a', 'b')
+        c._trigger_event('my message', '/foo', 'a', 'b', 'c')
+        c._trigger_event('my message', '/bar', 'a', 'b', 'c')
+        c._trigger_event('disconnect', '/bar')
+        connect_star_handler.assert_called_once_with('/bar')
+        msg_foo_handler.assert_called_once_with('a', 'b')
+        msg_star_handler.assert_called_once_with('/bar', 'a', 'b')
+        star_foo_handler.assert_called_once_with(
+            'my message', 'a', 'b', 'c')
+        star_star_handler.assert_called_once_with(
+            'my message', '/bar', 'a', 'b', 'c')
+
+    def test_trigger_event_with_catchall_namespace_handler(self):
+        result = {}
+
+        class MyNamespace(namespace.ClientNamespace):
+            def on_connect(self, ns):
+                result['result'] = (ns,)
+
+            def on_disconnect(self, ns, reason):
+                result['result'] = ('disconnect', ns, reason)
+
+            def on_foo(self, ns, data):
+                result['result'] = (ns, data)
+
+            def on_bar(self, ns):
+                result['result'] = 'bar' + ns
+
+            def on_baz(self, ns, data1, data2):
+                result['result'] = (ns, data1, data2)
+
+        c = client.Client()
+        c.register_namespace(MyNamespace('*'))
+        c._trigger_event('connect', '/foo')
+        assert result['result'] == ('/foo',)
+        c._trigger_event('foo', '/foo', 'a')
+        assert result['result'] == ('/foo', 'a')
+        c._trigger_event('bar', '/foo')
+        assert result['result'] == 'bar/foo'
+        c._trigger_event('baz', '/foo', 'a', 'b')
+        assert result['result'] == ('/foo', 'a', 'b')
+        c._trigger_event('disconnect', '/foo', 'bar')
+        assert result['result'] == ('disconnect', '/foo', 'bar')
+
     def test_trigger_event_class_namespace(self):
         c = client.Client()
         result = []
@@ -1023,9 +1085,11 @@ class TestClient(unittest.TestCase):
     @mock.patch('socketio.client.random.random', side_effect=[1, 0, 0.5])
     def test_handle_reconnect_max_attempts(self, random):
         c = client.Client(reconnection_attempts=2)
+        c.connection_namespaces = ['/']
         c._reconnect_task = 'foo'
         c._reconnect_abort = c.eio.create_event()
         c._reconnect_abort.wait = mock.MagicMock(return_value=False)
+        c._trigger_event = mock.MagicMock()
         c.connect = mock.MagicMock(
             side_effect=[ValueError, exceptions.ConnectionError, None]
         )
@@ -1036,13 +1100,17 @@ class TestClient(unittest.TestCase):
             mock.call(1.5),
         ]
         assert c._reconnect_task == 'foo'
+        c._trigger_event.assert_called_once_with('__disconnect_final',
+                                                 namespace='/')
 
     @mock.patch('socketio.client.random.random', side_effect=[1, 0, 0.5])
     def test_handle_reconnect_aborted(self, random):
         c = client.Client()
+        c.connection_namespaces = ['/']
         c._reconnect_task = 'foo'
         c._reconnect_abort = c.eio.create_event()
         c._reconnect_abort.wait = mock.MagicMock(side_effect=[False, True])
+        c._trigger_event = mock.MagicMock()
         c.connect = mock.MagicMock(side_effect=exceptions.ConnectionError)
         c._handle_reconnect()
         assert c._reconnect_abort.wait.call_count == 2
@@ -1051,6 +1119,63 @@ class TestClient(unittest.TestCase):
             mock.call(1.5),
         ]
         assert c._reconnect_task == 'foo'
+        c._trigger_event.assert_called_once_with('__disconnect_final',
+                                                 namespace='/')
+
+    def test_shutdown_disconnect(self):
+        c = client.Client()
+        c.connected = True
+        c.namespaces = {'/': '1'}
+        c._trigger_event = mock.MagicMock()
+        c._send_packet = mock.MagicMock()
+        c.eio = mock.MagicMock()
+        c.eio.state = 'connected'
+        c.shutdown()
+        assert c._trigger_event.call_count == 0
+        assert c._send_packet.call_count == 1
+        expected_packet = packet.Packet(packet.DISCONNECT, namespace='/')
+        assert (
+            c._send_packet.call_args_list[0][0][0].encode()
+            == expected_packet.encode()
+        )
+        c.eio.disconnect.assert_called_once_with(abort=True)
+
+    def test_shutdown_disconnect_namespaces(self):
+        c = client.Client()
+        c.connected = True
+        c.namespaces = {'/foo': '1', '/bar': '2'}
+        c._trigger_event = mock.MagicMock()
+        c._send_packet = mock.MagicMock()
+        c.eio = mock.MagicMock()
+        c.eio.state = 'connected'
+        c.shutdown()
+        assert c._trigger_event.call_count == 0
+        assert c._send_packet.call_count == 2
+        expected_packet = packet.Packet(packet.DISCONNECT, namespace='/foo')
+        assert (
+            c._send_packet.call_args_list[0][0][0].encode()
+            == expected_packet.encode()
+        )
+        expected_packet = packet.Packet(packet.DISCONNECT, namespace='/bar')
+        assert (
+            c._send_packet.call_args_list[1][0][0].encode()
+            == expected_packet.encode()
+        )
+
+    @mock.patch('socketio.client.random.random', side_effect=[1, 0, 0.5])
+    def test_shutdown_reconnect(self, random):
+        c = client.Client()
+        c.connection_namespaces = ['/']
+        c._reconnect_task = mock.MagicMock()
+        c._trigger_event = mock.MagicMock()
+        c.connect = mock.MagicMock(side_effect=exceptions.ConnectionError)
+        task = c.start_background_task(c._handle_reconnect)
+        time.sleep(0.1)
+        c.shutdown()
+        task.join()
+        c._trigger_event.assert_called_once_with('__disconnect_final',
+                                                 namespace='/')
+        c._reconnect_task.join.assert_called_once_with()
 
     def test_handle_eio_connect(self):
         c = client.Client()
@@ -1153,8 +1278,8 @@ class TestClient(unittest.TestCase):
         c.start_background_task = mock.MagicMock()
         c.sid = 'foo'
         c.eio.state = 'connected'
-        c._handle_eio_disconnect()
-        c._trigger_event.assert_called_once_with('disconnect', namespace='/')
+        c._handle_eio_disconnect('foo')
+        c._trigger_event.assert_called_once_with('disconnect', '/', 'foo')
         assert c.sid is None
         assert not c.connected
 
@@ -1166,10 +1291,13 @@ class TestClient(unittest.TestCase):
         c.start_background_task = mock.MagicMock()
         c.sid = 'foo'
         c.eio.state = 'connected'
-        c._handle_eio_disconnect()
-        c._trigger_event.assert_any_call('disconnect', namespace='/foo')
-        c._trigger_event.assert_any_call('disconnect', namespace='/bar')
-        c._trigger_event.assert_any_call('disconnect', namespace='/')
+        c._handle_eio_disconnect(c.reason.CLIENT_DISCONNECT)
+        c._trigger_event.assert_any_call('disconnect', '/foo',
+                                         c.reason.CLIENT_DISCONNECT)
+        c._trigger_event.assert_any_call('disconnect', '/bar',
+                                         c.reason.CLIENT_DISCONNECT)
+        c._trigger_event.assert_any_call('disconnect', '/',
+                                         c.reason.CLIENT_DISCONNECT)
         assert c.sid is None
         assert not c.connected
 
@@ -1177,19 +1305,28 @@ class TestClient(unittest.TestCase):
         c = client.Client(reconnection=True)
         c.start_background_task = mock.MagicMock()
         c.eio.state = 'connected'
-        c._handle_eio_disconnect()
+        c._handle_eio_disconnect(c.reason.CLIENT_DISCONNECT)
         c.start_background_task.assert_called_once_with(c._handle_reconnect)
 
     def test_eio_disconnect_self_disconnect(self):
         c = client.Client(reconnection=True)
         c.start_background_task = mock.MagicMock()
         c.eio.state = 'disconnected'
-        c._handle_eio_disconnect()
+        c._handle_eio_disconnect(c.reason.CLIENT_DISCONNECT)
         c.start_background_task.assert_not_called()
 
     def test_eio_disconnect_no_reconnect(self):
         c = client.Client(reconnection=False)
+        c.namespaces = {'/': '1'}
+        c.connected = True
+        c._trigger_event = mock.MagicMock()
         c.start_background_task = mock.MagicMock()
+        c.sid = 'foo'
         c.eio.state = 'connected'
-        c._handle_eio_disconnect()
+        c._handle_eio_disconnect(c.reason.TRANSPORT_ERROR)
+        c._trigger_event.assert_any_call('disconnect', '/',
+                                         c.reason.TRANSPORT_ERROR)
+        c._trigger_event.assert_any_call('__disconnect_final', '/')
+        assert c.sid is None
+        assert not c.connected
         c.start_background_task.assert_not_called()

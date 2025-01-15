@@ -33,14 +33,14 @@ async def my_broadcast_event(sid, message):
 
 @sio.event
 async def join(sid, message):
-    sio.enter_room(sid, message['room'])
+    await sio.enter_room(sid, message['room'])
     await sio.emit('my_response', {'data': 'Entered room: ' + message['room']},
                    room=sid)
 
 
 @sio.event
 async def leave(sid, message):
-    sio.leave_room(sid, message['room'])
+    await sio.leave_room(sid, message['room'])
     await sio.emit('my_response', {'data': 'Left room: ' + message['room']},
                    room=sid)
 
@@ -70,14 +70,18 @@ async def connect(sid, environ):
 
 
 @sio.event
-def disconnect(sid):
-    print('Client disconnected')
+def disconnect(sid, reason):
+    print('Client disconnected, reason:', reason)
 
 
 app.router.add_static('/static', 'static')
 app.router.add_get('/', index)
 
 
-if __name__ == '__main__':
+async def init_app():
     sio.start_background_task(background_task)
-    web.run_app(app)
+    return app
+
+
+if __name__ == '__main__':
+    web.run_app(init_app(), port=5000)

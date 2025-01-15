@@ -1,9 +1,25 @@
 #!/usr/bin/env python
-import uvicorn
 
+# set instrument to `True` to accept connections from the official Socket.IO
+# Admin UI hosted at https://admin.socket.io
+instrument = True
+admin_login = {
+    'username': 'admin',
+    'password': 'python',  # change this to a strong secret for production use!
+}
+
+import uvicorn
 import socketio
 
-sio = socketio.AsyncServer(async_mode='asgi')
+sio = socketio.AsyncServer(
+    async_mode='asgi',
+    cors_allowed_origins=None if not instrument else [
+        'http://localhost:5000',
+        'https://admin.socket.io',  # edit the allowed origins if necessary
+    ])
+if instrument:
+    sio.instrument(auth=admin_login)
+
 app = socketio.ASGIApp(sio, static_files={
     '/': 'app.html',
 })
@@ -31,14 +47,14 @@ async def test_broadcast_message(sid, message):
 
 @sio.on('join')
 async def join(sid, message):
-    sio.enter_room(sid, message['room'])
+    await sio.enter_room(sid, message['room'])
     await sio.emit('my_response', {'data': 'Entered room: ' + message['room']},
                    room=sid)
 
 
 @sio.on('leave')
 async def leave(sid, message):
-    sio.leave_room(sid, message['room'])
+    await sio.leave_room(sid, message['room'])
     await sio.emit('my_response', {'data': 'Left room: ' + message['room']},
                    room=sid)
 
@@ -72,9 +88,19 @@ async def test_connect(sid, environ):
 
 
 @sio.on('disconnect')
-def test_disconnect(sid):
-    print('Client disconnected')
+def test_disconnect(sid, reason):
+    print('Client disconnected, reason:', reason)
 
 
 if __name__ == '__main__':
+    if instrument:
+        print('The server is instrumented for remote administration.')
+        print(
+            'Use the official Socket.IO Admin UI at https://admin.socket.io '
+            'with the following connection details:'
+        )
+        print(' - Server URL: http://localhost:5000')
+        print(' - Username:', admin_login['username'])
+        print(' - Password:', admin_login['password'])
+        print('')
     uvicorn.run(app, host='127.0.0.1', port=5000)

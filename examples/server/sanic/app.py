@@ -4,7 +4,7 @@ from sanic.response import html
 import socketio
 
 sio = socketio.AsyncServer(async_mode='sanic')
-app = Sanic()
+app = Sanic(__name__)
 sio.attach(app)
 
 
@@ -40,14 +40,14 @@ async def my_broadcast_event(sid, message):
 
 @sio.event
 async def join(sid, message):
-    sio.enter_room(sid, message['room'])
+    await sio.enter_room(sid, message['room'])
     await sio.emit('my_response', {'data': 'Entered room: ' + message['room']},
                    room=sid)
 
 
 @sio.event
 async def leave(sid, message):
-    sio.leave_room(sid, message['room'])
+    await sio.leave_room(sid, message['room'])
     await sio.emit('my_response', {'data': 'Left room: ' + message['room']},
                    room=sid)
 
@@ -77,8 +77,8 @@ async def connect(sid, environ):
 
 
 @sio.event
-def disconnect(sid):
-    print('Client disconnected')
+def disconnect(sid, reason):
+    print('Client disconnected, reason:', reason)
 
 
 app.static('/static', './static')

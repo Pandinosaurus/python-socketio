@@ -1,10 +1,9 @@
-import unittest
 from unittest import mock
 
 from socketio import namespace
 
 
-class TestNamespace(unittest.TestCase):
+class TestNamespace:
     def test_connect_event(self):
         result = {}
 
@@ -21,12 +20,24 @@ class TestNamespace(unittest.TestCase):
         result = {}
 
         class MyNamespace(namespace.Namespace):
+            def on_disconnect(self, sid, reason):
+                result['result'] = (sid, reason)
+
+        ns = MyNamespace('/foo')
+        ns._set_server(mock.MagicMock())
+        ns.trigger_event('disconnect', 'sid', 'foo')
+        assert result['result'] == ('sid', 'foo')
+
+    def test_legacy_disconnect_event(self):
+        result = {}
+
+        class MyNamespace(namespace.Namespace):
             def on_disconnect(self, sid):
                 result['result'] = sid
 
         ns = MyNamespace('/foo')
         ns._set_server(mock.MagicMock())
-        ns.trigger_event('disconnect', 'sid')
+        ns.trigger_event('disconnect', 'sid', 'foo')
         assert result['result'] == 'sid'
 
     def test_event(self):
@@ -65,6 +76,7 @@ class TestNamespace(unittest.TestCase):
             skip_sid='skip',
             namespace='/foo',
             callback='cb',
+            ignore_queue=False,
         )
         ns.emit(
             'ev',
@@ -73,6 +85,7 @@ class TestNamespace(unittest.TestCase):
             skip_sid='skip',
             namespace='/bar',
             callback='cb',
+            ignore_queue=True,
         )
         ns.server.emit.assert_called_with(
             'ev',
@@ -82,6 +95,7 @@ class TestNamespace(unittest.TestCase):
             skip_sid='skip',
             namespace='/bar',
             callback='cb',
+            ignore_queue=True,
         )
 
     def test_send(self):
@@ -95,6 +109,7 @@ class TestNamespace(unittest.TestCase):
             skip_sid='skip',
             namespace='/foo',
             callback='cb',
+            ignore_queue=False,
         )
         ns.send(
             data='data',
@@ -102,6 +117,7 @@ class TestNamespace(unittest.TestCase):
             skip_sid='skip',
             namespace='/bar',
             callback='cb',
+            ignore_queue=True,
         )
         ns.server.send.assert_called_with(
             'data',
@@ -110,6 +126,7 @@ class TestNamespace(unittest.TestCase):
             skip_sid='skip',
             namespace='/bar',
             callback='cb',
+            ignore_queue=True,
         )
 
     def test_call(self):
@@ -123,6 +140,7 @@ class TestNamespace(unittest.TestCase):
             sid=None,
             namespace='/foo',
             timeout=None,
+            ignore_queue=False,
         )
         ns.call(
             'ev',
@@ -130,6 +148,7 @@ class TestNamespace(unittest.TestCase):
             sid='sid',
             namespace='/bar',
             timeout=45,
+            ignore_queue=True,
         )
         ns.server.call.assert_called_with(
             'ev',
@@ -138,6 +157,7 @@ class TestNamespace(unittest.TestCase):
             sid='sid',
             namespace='/bar',
             timeout=45,
+            ignore_queue=True,
         )
 
     def test_enter_room(self):
@@ -207,6 +227,42 @@ class TestNamespace(unittest.TestCase):
         ns.server.disconnect.assert_called_with('sid', namespace='/foo')
         ns.disconnect('sid', namespace='/bar')
         ns.server.disconnect.assert_called_with('sid', namespace='/bar')
+
+    def test_disconnect_event_client(self):
+        result = {}
+
+        class MyNamespace(namespace.ClientNamespace):
+            def on_disconnect(self, reason):
+                result['result'] = reason
+
+        ns = MyNamespace('/foo')
+        ns._set_client(mock.MagicMock())
+        ns.trigger_event('disconnect', 'foo')
+        assert result['result'] == 'foo'
+
+    def test_legacy_disconnect_event_client(self):
+        result = {}
+
+        class MyNamespace(namespace.ClientNamespace):
+            def on_disconnect(self):
+                result['result'] = 'ok'
+
+        ns = MyNamespace('/foo')
+        ns._set_client(mock.MagicMock())
+        ns.trigger_event('disconnect', 'foo')
+        assert result['result'] == 'ok'
+
+    def test_event_not_found_client(self):
+        result = {}
+
+        class MyNamespace(namespace.ClientNamespace):
+            def on_custom_message(self, sid, data):
+                result['result'] = (sid, data)
+
+        ns = MyNamespace('/foo')
+        ns._set_client(mock.MagicMock())
+        ns.trigger_event('another_custom_message', 'sid', {'data': 'data'})
+        assert result == {}
 
     def test_emit_client(self):
         ns = namespace.ClientNamespace('/foo')

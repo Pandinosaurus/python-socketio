@@ -4,7 +4,7 @@ from sanic.response import html
 import socketio
 
 sio = socketio.AsyncServer(async_mode='sanic')
-app = Sanic()
+app = Sanic(__name__)
 sio.attach(app)
 
 
@@ -21,8 +21,8 @@ async def connect(sid, environ, auth):
 
 
 @sio.event
-def disconnect(sid):
-    print('disconnected', sid)
+def disconnect(sid, reason):
+    print('disconnected', sid, reason)
 
 
 app.static('/static', './static')

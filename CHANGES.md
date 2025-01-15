@@ -1,5 +1,148 @@
 # python-socketio change log
 
+**Release 5.12.1** - 2024-12-29
+
+- Fix admin instrumentation support of disconnect reasons [#1423](https://github.com/miguelgrinberg/python-socketio/issues/1423) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/b75fd31625cfea0d8c67d776070e4f8de99c1e45))
+- Stop using deprecated datetime functions ([commit](https://github.com/miguelgrinberg/python-socketio/commit/8fe012abbb350107b742ab2cf9aa44d328bc23e9))
+- Enable admin instrumentation by default in WSGI and ASGI examples ([commit](https://github.com/miguelgrinberg/python-socketio/commit/269332da8041df115e3a1e2ca04808c3179a72e1))
+- Fixed broken gevent URL in documentation [#1427](https://github.com/miguelgrinberg/python-socketio/issues/1427) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/8964dab9d545333646fafad9aae0becd761a1045)) (thanks **Carlos Guerrero**!)
+
+**Release 5.12.0** - 2024-12-18
+
+- Added a `reason` argument to the disconnect handler [#1422](https://github.com/miguelgrinberg/python-socketio/issues/1422) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/bd8555da8523d1a73432685a00eb5acb4d2261f5))
+- Prevented starting multiple tasks for reconnection [#1369](https://github.com/miguelgrinberg/python-socketio/issues/1369) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/b6ee33e56cf2679664c1b894bf7e5d33a30976db)) (thanks **humayunsr**!)
+- Fixed `AsyncClient::wait()` unexpected return after success reconnect [#1407](https://github.com/miguelgrinberg/python-socketio/issues/1407) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/78d1124c50cff149051fb89bf6f08000bf184da5)) (thanks **Arseny**!)
+- Removed old constructs from old and unsupported Python versions ([commit](https://github.com/miguelgrinberg/python-socketio/commit/db642bb2bd9794eeceddd54abc47665c69e85406))
+- Removed dependency on unittest.TestCase base class in unit tests ([commit](https://github.com/miguelgrinberg/python-socketio/commit/abf336e108b01f44afb473eb86c1dece6360195c))
+- Adopted pyenv-asyncio for async unit tests ([commit](https://github.com/miguelgrinberg/python-socketio/commit/0b5c4638e5e4bff06fcf46476d218ae5ad4ada14))
+- Adopted unittest.mock.AsyncMock in async unit tests ([commit](https://github.com/miguelgrinberg/python-socketio/commit/8f0e66c1cd1cd63dcef703576cc9cb9c99104df7))
+- Fix typo with `AsyncClient.connect` example [#1403](https://github.com/miguelgrinberg/python-socketio/issues/1403) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/72d37ea79f4cf6076591782e4781fd4868a7e0d6)) (thanks **Peter Bierma**!)
+- Documentation typo [#1421](https://github.com/miguelgrinberg/python-socketio/issues/1421) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/bf5a05ae9bf94b2fbd1367a04884ef5a39cd2671)) (thanks **Masen Furer**!)
+- Renamed flask-socketio references to python-socketio in documentation [#1377](https://github.com/miguelgrinberg/python-socketio/issues/1377) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/5f83cd0f7b2911705eaf1a8cb9060afbee6eb456))
+- Added Python 3.13 CI builds ([commit](https://github.com/miguelgrinberg/python-socketio/commit/42da5d2f5426e812fd37d4cabcb9277810cae9c1))
+
+**Release 5.11.4** - 2024-09-02
+
+- Prevent crash when client sends empty event ([commit](https://github.com/miguelgrinberg/python-socketio/commit/1b901de0077322eedb3509318ccba939f5f0bf10))
+- Add missing `to` argument in manager's `emit()` method [#1374](https://github.com/miguelgrinberg/python-socketio/issues/1374) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/f1476041e5bb0857a99024c9a38203edfc974bdf)) (thanks **Pavieł Michalkievič**!)
+- Reorganization of server documentation [#1350](https://github.com/miguelgrinberg/python-socketio/issues/1350) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/3a618c67ef60736d5619b9ac52c47d96a6acf3c3))
+- Update documentation note about Sanic issues [#1365](https://github.com/miguelgrinberg/python-socketio/issues/1365) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/287d6ed551090eed822f924bb548ba93923dd4d1))
+
+**Release 5.11.3** - 2024-06-19
+
+- New `shutdown()` method added to the client [#1333](https://github.com/miguelgrinberg/python-socketio/issues/1333) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/811e044a46b7d6e4d94bf870e59d0cd8187850d3))
+- Ignore catch-all namespace in client connections [#1351](https://github.com/miguelgrinberg/python-socketio/issues/1351) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/469b7c0dd51eea97979f784d0c94359ad18a96ac))
+- Accept 0 as a callback id [#1329](https://github.com/miguelgrinberg/python-socketio/issues/1329) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/e59351969241c3d7f44560027cf1e44206e17d6c)) (thanks **Ruslan Bel'kov**!)
+- Minor updates to the server and client documentation ([commit](https://github.com/miguelgrinberg/python-socketio/commit/5e78ecbc343d9c7252a6449029263b4a5cb967c8))
+- Remove outdated information in intro section of documentation [#1337](https://github.com/miguelgrinberg/python-socketio/issues/1337) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/82ceaf7a23c51ed1911e550aaf71d6449584eaa0))
+- Fixed typos in server documentation [#1331](https://github.com/miguelgrinberg/python-socketio/issues/1331) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/547449bc70248b1a2c68e362a026d42db083222c)) (thanks **John Sigg**!)
+
+**Release 5.11.2** - 2024-03-24
+
+- Improved routing to catch-all namespace handlers [#1316](https://github.com/miguelgrinberg/python-socketio/issues/1316) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/bd39b8f2156f600ea6de558af03a6be205d6e892)) (thanks **asuka**!)
+- Option to disable routing in ASGIApp ([commit](https://github.com/miguelgrinberg/python-socketio/commit/7cc84bd13dfa0a86b0326446fb6954949ef948c0))
+
+**Release 5.11.1** - 2024-02-05
+
+- Connection retry option in the client [#1306](https://github.com/miguelgrinberg/python-socketio/issues/1306) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/b4f36148d816b2fbf2a81237dff70b18d909aebf))
+- use Socket.IO sid in transport[#1299](https://github.com/miguelgrinberg/python-socketio/issues/1299) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/0e1f23229dc5a478df474e5bb6e5c91e5e30aa04))
+- Add support for Python 3.12 and drop 3.7 [#1297](https://github.com/miguelgrinberg/python-socketio/issues/1297) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/417785293f6c1351be6ea10b6b9f57abff03fdfc)) (thanks **Hugo van Kemenade**!)
+
+**Release 5.11.0** - 2024-01-06
+
+- Support catch-all namespaces [#1288](https://github.com/miguelgrinberg/python-socketio/issues/1288) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/801241378ec6cbbaef6490399220b00473f66d34)) (thanks **mooomooo**!)
+- Prevent pubsub managers from ever crashing [#1262](https://github.com/miguelgrinberg/python-socketio/issues/1262) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/12134bd5c50851a1c1cd9ac319beeb7b12a9398b))
+- Hold references to background tasks to avoid garbage collection [#1191](https://github.com/miguelgrinberg/python-socketio/issues/1191) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/2f07824347190026e3dc40c66cffbb5604d09799))
+- Clearer documentation for the `max_http_buffer_size` argument [#1272](https://github.com/miguelgrinberg/python-socketio/issues/1272) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/1f488b03b669ee8b4435e342ff00d8b88f43d5fc))
+- Improved catch-all handler documentation ([commit](https://github.com/miguelgrinberg/python-socketio/commit/0a54ec6ae46848b336849d6c198c11a6e1dcf51f))
+- Documentation typos ([commit](https://github.com/miguelgrinberg/python-socketio/commit/29c794333ec284bd8f968db68d24738ef2b43923))
+- Remove documentation references to gevent-websocket, which is not needed anymore ([commit](https://github.com/miguelgrinberg/python-socketio/commit/0aa8683a3b13f5175fea70e52f889297d605b2bc))
+- Remove documentation reference to outdated aioredis package [#1268](https://github.com/miguelgrinberg/python-socketio/issues/1268) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/344e5c1d6b3927464cf31069cea198569c6540b3))
+- Update requirements for Django example ([commit](https://github.com/miguelgrinberg/python-socketio/commit/f72139b89e4de9eb38aa90d62ca0fa205db196d9))
+- Unit test fixes for the new simple clients [#1265](https://github.com/miguelgrinberg/python-socketio/issues/1265) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/66b9586a65564d82ae3589c65e541a0e593d90d3))
+
+**Release 5.10.0** - 2023-10-15
+
+- New `SimpleClient` and `AsyncSimpleClient` classes [#1237](https://github.com/miguelgrinberg/python-socketio/issues/1237) ([commit #1](https://github.com/miguelgrinberg/python-socketio/commit/55d6310eb3e194b1e67e40942a953bc4413b98b7)) ([commit #2](https://github.com/miguelgrinberg/python-socketio/commit/699ee9c47adcb44f1a8150d8c92a9555d07f7b5b))
+- Reporting to Socket.IO Admin UI (https://admin.socket.io) [#1164](https://github.com/miguelgrinberg/python-socketio/issues/1164) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/4bf48776ca08acba255bf660f5ca61810202826a))
+- Support entering and leaving rooms through pubsub client managers ([commit](https://github.com/miguelgrinberg/python-socketio/commit/d222f4c3deb7a12f3a8c584777dbfc18448a206d))
+- Async versions of enter_room and leave_room should be coroutines (**breaking change**) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/8e3460c5fcc351ca0cff83c690eedcde0e8a6e7e))
+- Add a `shutdown()` function for the server ([commit](https://github.com/miguelgrinberg/python-socketio/commit/c419fc5481846ab026ca847234f5ebe5420e510a))
+- Message queue optimizations [#1240](https://github.com/miguelgrinberg/python-socketio/issues/1240) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/dc6e4f516f38d1125cb44ccae11b120ffa8fe7f3))
+- Remove unneeded arguments from super() ([commit](https://github.com/miguelgrinberg/python-socketio/commit/8da3c617a66877ec0fc5ab25256ead41ae611351))
+- Internal code restructure (no functional changes) ([commit #1](https://github.com/miguelgrinberg/python-socketio/commit/ef0f88f6cf5687dddfd0e3be9a90af2865d5871f)) ([commit #2](https://github.com/miguelgrinberg/python-socketio/commit/58b57068ab770d099bdd54d4eb8d22ce8a4f6751))
+- Add FastAPI and Litestar server examples ([commit](https://github.com/miguelgrinberg/python-socketio/commit/2e1f0262ad9a037858b04b9dcec7509ee5008f8c))
+- Update Socket.IO JavaScript client to version 4.7.2 in all examples ([commit](https://github.com/miguelgrinberg/python-socketio/commit/3f78af283171d23b7f1dbfd055e21afe00877399))
+- Update `ping_timeout` documented default to accord with current Engine.IO behavior [#1255](https://github.com/miguelgrinberg/python-socketio/issues/1255) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/d40b3a33fff5c6b896559fc534ccd611ab9cf1f4)) (thanks **[object Object]**!)
+- Refactor common testing helpers into a separate module ([commit](https://github.com/miguelgrinberg/python-socketio/commit/7208ec09e17466758cebb0732801ec84b25f1299))
+- Migrate Python package metadata to pyproject.toml ([commit](https://github.com/miguelgrinberg/python-socketio/commit/6bdc498d423ca793b3db2d158fba4a461610de6a))
+
+**Release 5.9.0** - 2023-09-03
+
+- Optimized performance and memory usage for broadcasts [#1233](https://github.com/miguelgrinberg/python-socketio/issues/1233) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/bf11ad36aebeebbc0b7a74d88d4b9a8fad113456))
+- Improved documentation on horizontal scaling [#1099](https://github.com/miguelgrinberg/python-socketio/issues/1099) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/9d02247bc5914798a965cf423e978747a5535e33))
+- Corrected user session documentation example [#1170](https://github.com/miguelgrinberg/python-socketio/issues/1170) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/72dfdc6c8aff7f4f61c409e771df6a19299ad36f))
+- Improved grammar in documentation [#1175](https://github.com/miguelgrinberg/python-socketio/issues/1175) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/c66d7a9f1ade0f728840b8ee9079599dd6a3de3f)) (thanks **zykron1**!)
+- Fix docstring typo: client/server mixup [#1163](https://github.com/miguelgrinberg/python-socketio/issues/1163) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/598dd7e258c0c1d050456bbad2cd867dfca3df0f)) (thanks **Sasja**!)
+- Fix typos in the documentation [#1230](https://github.com/miguelgrinberg/python-socketio/issues/1230) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/1b7ed682e06d7c8a758a2f89391ddc941f70ee98)) (thanks **Alex Kuhrt**!)
+- Upgrade dependencies in Django server example ([commit](https://github.com/miguelgrinberg/python-socketio/commit/00b31663c29968bd50282d22fca9b95c09e4becf))
+- Update reference JavaScript examples ([commit](https://github.com/miguelgrinberg/python-socketio/commit/6df96fb1c598c00ddf8f8995cbc095f0383d38ef))
+- Upgrade to pypy-3.9 in unit tests ([commit](https://github.com/miguelgrinberg/python-socketio/commit/f49d65a0c3ff55f92a817994898c4182efa5ba69))
+
+**Release 5.8.0** - 2023-03-16
+
+- Made kombu client manager more robust and efficient ([commit](https://github.com/miguelgrinberg/python-socketio/commit/8293dc3f8fa90f3d92192a702b28c23d8c516110))
+- Made aio_pika client manager more robust and efficient [#1142](https://github.com/miguelgrinberg/python-socketio/issues/1142) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/cd7f781c022dd1d1ec3c6695a0fd6ab3ce864fd5))
+- Correctly handle emits to multiple rooms in the async server [#1081](https://github.com/miguelgrinberg/python-socketio/issues/1081) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/232cef1f86ff19878190c44caf991e017c8480a4))
+- Expose the `ignore_queue` option in namespaces [#1103](https://github.com/miguelgrinberg/python-socketio/issues/1103) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/1cadada02dd7dc1eb96f45e88cbec67e1a393db3))
+- Do not automatically import zmq ([commit](https://github.com/miguelgrinberg/python-socketio/commit/de4d5b51e5fc8ba0d0f904851f23f8cced16d7f6))
+- TLS/SSL client documentation [#1040](https://github.com/miguelgrinberg/python-socketio/issues/1040) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/54aecfda917ec100e0b5e2c0e955ef719e0eb645))
+- Removed incorrect reference to multiple callback invocations in documentation [#1152](https://github.com/miguelgrinberg/python-socketio/issues/1152) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/c4117fd6514374042127ab05f1f2d8d221fcf60d))
+- Fix documentation typo [#1155](https://github.com/miguelgrinberg/python-socketio/issues/1155) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/270eb372cc83778a897d32e95453eb385328d9de)) (thanks **Onwuka Gideon**!)
+- Fix documentation typos ([commit](https://github.com/miguelgrinberg/python-socketio/commit/8c747ab67b3e5c9f31db540a13c3da1b7784617c))
+- Fix documentation typo in asyncio_server.py [#1150](https://github.com/miguelgrinberg/python-socketio/issues/1150) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/b2cc86cfb2502691d70447b0002179602a798e77)) (thanks **riz-j**!)
+- Fix documentationi type [#1091](https://github.com/miguelgrinberg/python-socketio/issues/1091) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/55db7458900a179a9363294cc4fc91eb9c775f54)) (thanks **mostlycryptic**!)
+- Add Python 3.11 to builds ([commit](https://github.com/miguelgrinberg/python-socketio/commit/60fe63b098af8c035891ae62a4336538ea419184))
+
+**Release 5.7.2** - 2022-10-17
+
+- Fixed disconnect implementation when using a message queue [#1002](https://github.com/miguelgrinberg/python-socketio/issues/1002) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/f56ef6f0401b273107fc483c4ae1b5512209ac48))
+- Fixed remote async disconnects via message queue [#1003](https://github.com/miguelgrinberg/python-socketio/issues/1003) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/104d6569a0480ed0adb04e7d41f156762f9ebe9b))
+- Support optional payloads in msgpack implementation [#981](https://github.com/miguelgrinberg/python-socketio/issues/981) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/ce1afd79e69e35b81a6f0d02fbd7ae04af59f9d6)) (thanks **Cromfel**!)
+- Recommend ASGI integration for Sanic in Documentation ([commit](https://github.com/miguelgrinberg/python-socketio/commit/2c3e360ae8b151bc0bfedbde50248cd0dc8d1ff9))
+
+**Release 5.7.1** - 2022-07-15
+
+- Add `namespaces` argument to `Server` and `AsyncServer` [#822](https://github.com/miguelgrinberg/python-socketio/issues/822) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/efe87d867a205493654107d381bdb8b619b8ab2d))
+- Add missing `await` in asyncio server [#952](https://github.com/miguelgrinberg/python-socketio/issues/952) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/d4e69fb7ceecdb98584f36e085a186eb4da23b07)) (thanks **sjrodahl**!)
+
+**Release 5.7.0** - 2022-07-04
+
+- Server refuses connections on unknown namespaces [#822](https://github.com/miguelgrinberg/python-socketio/issues/822) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/44715012dc0d578b067a9a389c8aef2ce39f65c1))
+- Do not send ACK packet for unknown events [#824](https://github.com/miguelgrinberg/python-socketio/issues/824) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/268fe12ffa68f7af8881c75695c287c09490cef9))
+- Fix Python 3.11 deprecation warning [#941](https://github.com/miguelgrinberg/python-socketio/issues/941) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/4b697815c3da4574fca8b759d21a4e0800dafc50)) (thanks **Jérôme Boulmier**!)
+- Correct handling of RedisError exception [#919](https://github.com/miguelgrinberg/python-socketio/issues/919) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/98318fbdde2c4dcfba15d1b0aaf266b599e81e0c))
+- Update Django example ([commit](https://github.com/miguelgrinberg/python-socketio/commit/dc7ac74c1d2c97544056541736d644060837a080))
+- Documentation fix for async client ([commit](https://github.com/miguelgrinberg/python-socketio/commit/5b9134617759a1b64adb2f9aba0974c732576cc4))
+- Update documentation of asyncio server ([commit](https://github.com/miguelgrinberg/python-socketio/commit/98f3cb4664ff10c0bb17826b11564644bed99fd6))
+- Fix documentation typo [#948](https://github.com/miguelgrinberg/python-socketio/issues/948) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/f888446b330146484325b568cdc2303c9b35c095)) (thanks **mostlycryptic**!)
+
+**Release 5.6.0** - 2022-04-24
+
+- Catch and log errors in pubsub listening thread [#889](https://github.com/miguelgrinberg/python-socketio/issues/889) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/f2ae136dcd724d56353b783092c448d6e638635f))
+- Use new asyncio support in redis package [#911](https://github.com/miguelgrinberg/python-socketio/issues/911) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/0e7691b77605de00dedcbf87e415bb79fcd7f2aa))
+- Add support for aiopiko version 7 and higher [#897](https://github.com/miguelgrinberg/python-socketio/issues/897) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/b4b55e1fb5e9d837b3301b5b873d9a7fe2a12023)) (thanks **Dmitriy**!)
+- Fixed documentation typo [#910](https://github.com/miguelgrinberg/python-socketio/issues/910) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/16243e7c5f95f73f1f17b6febbf23c6483c17c62)) (thanks **Omar Costa Hamido**!)
+- Fix aiohttp example's background task [#881](https://github.com/miguelgrinberg/python-socketio/issues/881) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/fb9648575ef5bd529579f854f141df52d9e000ed))
+- Bump sanic from 0.8 to 20.12.6 in /examples/server/sanic [#875](https://github.com/miguelgrinberg/python-socketio/issues/875) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/342f2e3fe9a3f973a491326b19fa4f96705b9b7e)) (thanks **dependabot[bot]**!)
+- Add application name to Sanic example [#892](https://github.com/miguelgrinberg/python-socketio/issues/892) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/4d5e36d36f865bf0527cfeb486a4e7f917b28717)) (thanks **Florian Metzger-Noel**!)
+
+**Release 5.5.2** - 2022-02-15
+
+- Connect with an empty auth object instead of `None` [#861](https://github.com/miguelgrinberg/python-socketio/issues/861) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/1fb7a76575426dd58a5e9c0e01646302ccc96188))
+- Fix indentation in the "Rooms" docs example. [#872](https://github.com/miguelgrinberg/python-socketio/issues/872) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/3336181f9ce5fe737d675f8343f18a885c651ebd)) (thanks **Ezio Melotti**!)
+- Remove 3.6 and pypy-3.6 builds, add 3.10 and pypy-3.8 ([commit](https://github.com/miguelgrinberg/python-socketio/commit/ed5679a7cb01963b44a5004e1236b7e8b485aa0b))
+
 **Release 5.5.1** - 2022-01-11
 
 - Support multiple Kafka servers ([commit](https://github.com/miguelgrinberg/python-socketio/commit/4ee3649514b98c50cc0bf70d3f269389da52772d)) (thanks **sparkingdark**!)
