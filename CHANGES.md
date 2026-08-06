@@ -1,5 +1,9 @@
 # python-socketio change log
 
+**Release 5.16.4** - 2026-08-07
+
+- Delete incomplete binary packet when client disconnects ([commit](https://github.com/miguelgrinberg/python-socketio/commit/4bec3ef87bcfd6ab5b94cd3ac09d873283a6960e))
+
 **Release 5.16.3** - 2026-06-15
 
 - Catch all exceptions in redis and rabbitmq client managers [#1581](https://github.com/miguelgrinberg/python-socketio/issues/1581) ([commit](https://github.com/miguelgrinberg/python-socketio/commit/80bb5c9b07e6b53e45f610ec29a24124c539d41b))
