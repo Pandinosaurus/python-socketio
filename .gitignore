@@ -45,3 +45,8 @@ htmlcov
 *.swp
 
 node_modules
+.direnv
+.envrc
+coverage.xml
+requirements*.txt
+_build.log
