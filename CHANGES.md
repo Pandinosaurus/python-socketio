@@ -1,5 +1,11 @@
 # python-socketio change log
 
+**Release 5.17.0** - 2026-09-14
+
+- Do not allow users to join another user's sid room [#10002](https://code.miguelgrinberg.com/miguelgrinberg/python-socketio/issues/10002) ([commit](https://code.miguelgrinberg.com/miguelgrinberg/python-socketio/commit/19ff7dc774607749124e6254d97c8e438b4584ad))
+- Better handling of legacy connect handlers [#10005](https://code.miguelgrinberg.com/miguelgrinberg/python-socketio/issues/10005) ([commit](https://code.miguelgrinberg.com/miguelgrinberg/python-socketio/commit/090af4e2b63069abcf1bad2d69a411d7c7b9faeb))
+- Client: improve connection error message [#10001](https://code.miguelgrinberg.com/miguelgrinberg/python-socketio/issues/10001) ([commit](https://code.miguelgrinberg.com/miguelgrinberg/python-socketio/commit/ef141e9c66ce35a988039e4d456b5e35895097a6))
+
 **Release 5.16.4** - 2026-08-07
 
 - Delete incomplete binary packet when client disconnects ([commit](https://github.com/miguelgrinberg/python-socketio/commit/4bec3ef87bcfd6ab5b94cd3ac09d873283a6960e))
